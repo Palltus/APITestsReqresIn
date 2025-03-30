@@ -1,6 +1,6 @@
 package dto.page;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import dto.user.User;
 
 import java.util.ArrayList;
@@ -9,10 +9,10 @@ import java.util.ArrayList;
 public class Page {
 
     private final Integer page;
-    @SerializedName("per_page")
+    @JsonProperty("per_page")
     private final Integer perPage;
     private final Integer total;
-    @SerializedName("total_pages")
+    @JsonProperty("total_pages")
     private final Integer totalPages;
     private final ArrayList<User> data;
 

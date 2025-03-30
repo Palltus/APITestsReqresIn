@@ -1,13 +1,13 @@
 package dto.user;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
 public class CreateNewUserForm {
-    @SerializedName("name")
+    @JsonProperty("name")
     private final String NAME;
-    @SerializedName("job")
+    @JsonProperty("job")
     private final String JOB;
 
 }

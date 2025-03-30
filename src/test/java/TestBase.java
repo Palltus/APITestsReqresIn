@@ -36,14 +36,14 @@ public class TestBase {
     @Test
     void getAllUsersFromPage() {
 
-        User expData = new User(7,
+        User expUser = new User(7,
                 "michael.lawson@reqres.in",
                 "Michael",
                 "Lawson",
                 "https://reqres.in/img/faces/7-image.jpg");
 
         step("Получение ответа и формирование списка Юзеров", () -> {
-            List<User> dataList = given(reqSpec)
+            List<User> userList = given(reqSpec)
                     .param("page", "2")
                     .when()
                     .get("users")
@@ -55,35 +55,35 @@ public class TestBase {
                     .body("total_pages", equalTo(2))
                     .body("total_pages", equalTo(2))
                     .body("data.last_name", hasItem("Lawson"))
+                    .body("data.email", hasItem("george.edwards@reqres.in"))
                     .extract().body().jsonPath().getList("data", User.class);
 
             step("Проверка вхождения числа ID юзера в ссылку на аватар", () -> {
-                dataList.forEach(u -> Assertions.assertTrue(u.getAvatar().contains(u.getId().toString())));
+                userList.forEach(u -> Assertions.assertTrue(u.getAvatar().contains(u.getId().toString())));
             });
             step("Проверить что все эмейлы заканчиваются на reqres.in через /for", () -> {
-                for (int i = 0; i < dataList.size(); i++) {
-                    Assertions.assertTrue(dataList.get(i).getEmail().endsWith("@reqres.in"));
+                for (int i = 0; i < userList.size(); i++) {
+                    Assertions.assertTrue(userList.get(i).getEmail().endsWith("@reqres.in"));
                 }
             });
             step("Проверить что все эмейлы заканчиваются на reqres.in через stream", () -> {
-                Assertions.assertTrue(dataList.stream().allMatch(x -> x.getEmail().endsWith("@reqres.in")));
+                Assertions.assertTrue(userList.stream().allMatch(x -> x.getEmail().endsWith("@reqres.in")));
             });
             step("Проверка 1-го объекта экземпляра User", () ->
-                    Assertions.assertEquals(expData, dataList.get(0))
+                    Assertions.assertEquals(expUser, userList.get(0))
             );
 
             step("Проверка количества полученных юзеров", () ->
-                    Assertions.assertEquals(6, dataList.size())
+                    Assertions.assertEquals(6, userList.size())
             );
 
-            List<String> ids = dataList.stream().map(x -> x.getId().toString())
+            List<String> ids = userList.stream().map(x -> x.getId().toString())
                     .sorted(Comparator.comparingInt(Integer::parseInt)).toList();
 
             step("Проверка заданной сортировки", () -> {
-                List<Integer> ids1 = dataList.stream().map(User::getId).collect(Collectors.toList());
+                List<Integer> ids1 = userList.stream().map(User::getId).collect(Collectors.toList());
                 assertThat(ids1, contains(7, 8, 9, 10, 11, 12));
             });
-
         });
     }
 
@@ -164,7 +164,7 @@ public class TestBase {
 
         SoftAssertions softly = new SoftAssertions();
         softly.assertThat(response.getName()).isEqualTo("morpheus");
-        softly.assertThat(response.getJob()).isEqualTo("zion r1esident");
+        softly.assertThat(response.getJob()).isEqualTo("zion resident");
         softly.assertThat(response.getUpdatedAt()).isNotNull()
                 .satisfies(dateStr -> {
                     ZonedDateTime date = ZonedDateTime.parse(dateStr);
